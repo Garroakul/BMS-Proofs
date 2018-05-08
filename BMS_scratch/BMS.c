@@ -33,7 +33,6 @@ public:
     void show_account() const;  //function to show data on screen
     void deposit(int);  //- make a deposit
     void withdraw(int); //- make a withdrawal
-    void transfer(int, int); //- make an internal transfer //TODO
     int get_number_of_accounts();//- get the current number of accounts //TODO
     double get_total_money();//- get the total amount of money held by the bank //TODO
     void add_interest(double, int);//-add interest,given rate and amount of time(in sec/hr/day) //TODO
@@ -78,8 +77,9 @@ int bank_account::return_depositAm() const {
 void write_account();   //function to write record in binary file
 void display_account(int);  //function to display account details
 void delete_account(int);   //function to delete account
-void deposit_amount(int);   //-deposit amount
-void withdraw_amount(int);  //-withdraw amount
+void deposit_amount(int,int);   //-deposit amount
+bool withdraw_amount(int,int);  //-withdraw amount
+bool transfer(int,int,int); //do an internal transfer
 
 //main
 int main() {
@@ -98,7 +98,7 @@ void write_account() {
 }
 
 //read file
-void display_sp(int n) {
+void display_account(int n) {
     bank_account account;
     bool flag = false;
     ifstream inFile;
@@ -137,8 +137,7 @@ void delete_account(int n) {
 }
 
 //deposit
-void deposit_amount(int n) {
-    int amount;
+void deposit_amount(int n, int amount) {
     bool found = false;
     bank_account account;
     fstream File;
@@ -147,8 +146,6 @@ void deposit_amount(int n) {
         File.read(reinterpret_cast<char *> (&account), sizeof(bank_account));
         if (account.return_accountNo() == n) {
             account.show_account();
-            cout << "Please enter The amount to be deposited";
-            cin >> amount;
             account.deposit(amount);
 
             int pos = (-1) * static_cast<int>(sizeof(account));
@@ -164,8 +161,7 @@ void deposit_amount(int n) {
 }
 
 //withdraw
-void withdraw_amount(int n) {
-    int amount;
+bool withdraw_amount(int n, int amount) {
     bool found = false;
     bank_account account;
     fstream File;
@@ -174,11 +170,12 @@ void withdraw_amount(int n) {
         File.read(reinterpret_cast<char *> (&account), sizeof(bank_account));
         if (account.return_accountNo() == n) {
             account.show_account();
-            cout << "Please enter The amount to be withdraw";
-            cin >> amount;
             int bal = ac.retdeposit() - amount;
-            if (bal < 0)
+            if (bal < 0){
                 cout << "Insufficient balance";
+                return false;
+            }
+
             else
                 account.withdraw(amount);
         }
@@ -188,8 +185,34 @@ void withdraw_amount(int n) {
         cout << "Withdraw is completed";
         found = true;
 
+
     }
     File.close();
-    if (!found)
-        cout << "nn Record Not Found ";
+    if (!found){
+        cout << "Account Not Found ";
+        return false;
+    }
+    return true;
+
+}
+
+//transfer
+bool transfer(int n1, int n2, int amount){
+    bank_account account1;
+    bank_account account2;
+    File.open("bank_account.dat", ios::binary | ios::in | ios::out);
+    while (!File.eof() && !found) {
+        File.read(reinterpret_cast<char *> (&account1), sizeof(bank_account));
+        File.read(reinterpret_cast<char *> (&account2), sizeof(bank_account));
+        if (account1.return_accountNo() == n1 && account2.return_accountNo() == n2) {
+            //transfer from acc1 to acc2
+            if(withdraw_amount(account1, amount)){
+                deposit_amount(account2, amount);
+                cout << "Withdraw is completed";
+                return true;
+            }
+        }
+    }
+    return false;
+
 }
