@@ -1,6 +1,5 @@
-
 //---------------------------------------------------------------
-//                   Bank Management System				
+//                   Bank Management System
 //---------------------------------------------------------------
 
 /*It provides functions to:
@@ -14,6 +13,7 @@
    - get the total amount of money held by the bank (the sum of the balances)
    - add interest to an account, given an interest rate and amount of time
  */
+
 
 #include<iostream>
 #include<fstream>
@@ -33,10 +33,10 @@ public:
     void show_account() const;  //function to show data on screen
     void deposit(int);  //- make a deposit
     void withdraw(int); //- make a withdrawal
-    void transfer(int,int); //- make an internal transfer //TODO
+    void transfer(int, int); //- make an internal transfer //TODO
     int get_number_of_accounts();//- get the current number of accounts //TODO
     double get_total_money();//- get the total amount of money held by the bank //TODO
-    void add_interest(double,int);//-add interest,given rate and amount of time(in sec/hr/day) //TODO
+    void add_interest(double, int);//-add interest,given rate and amount of time(in sec/hr/day) //TODO
     int return_accountNo() const; //function to return account number
     int return_depositAm() const; //function to return balance amount
 };         //class ends here
@@ -161,36 +161,35 @@ void deposit_amount(int n) {
     File.close();
     if (!found)
         cout << "Account number is not valid";
-
-//withdraw
-    void withdraw_amount(int n) {
-        int amount;
-        bool found = false;
-        bank_account account;
-        fstream File;
-        File.open("bank_account.dat", ios::binary | ios::in | ios::out);
-        while (!File.eof() && !found) {
-            File.read(reinterpret_cast<char *> (&account), sizeof(bank_account));
-            if (account.return_accountNo() == n) {
-                account.show_account();
-                cout << "Please enter The amount to be withdraw";
-                cin >> amount;
-                int bal = ac.retdeposit() - amount;
-                if (bal < 0)
-                    cout << "Insufficient balance";
-                else
-                    account.withdraw(amount);
-            }
-            int pos = (-1) * static_cast<int>(sizeof(account));
-            File.seekp(pos, ios::cur);
-            File.write(reinterpret_cast<char *> (&account), sizeof(bank_account));
-            cout << "Withdraw is completed";
-            found = true;
-
-        }
-        File.close();
-        if (!found)
-            cout << "nn Record Not Found ";
-    }
 }
 
+//withdraw
+void withdraw_amount(int n) {
+    int amount;
+    bool found = false;
+    bank_account account;
+    fstream File;
+    File.open("bank_account.dat", ios::binary | ios::in | ios::out);
+    while (!File.eof() && !found) {
+        File.read(reinterpret_cast<char *> (&account), sizeof(bank_account));
+        if (account.return_accountNo() == n) {
+            account.show_account();
+            cout << "Please enter The amount to be withdraw";
+            cin >> amount;
+            int bal = ac.retdeposit() - amount;
+            if (bal < 0)
+                cout << "Insufficient balance";
+            else
+                account.withdraw(amount);
+        }
+        int pos = (-1) * static_cast<int>(sizeof(account));
+        File.seekp(pos, ios::cur);
+        File.write(reinterpret_cast<char *> (&account), sizeof(bank_account));
+        cout << "Withdraw is completed";
+        found = true;
+
+    }
+    File.close();
+    if (!found)
+        cout << "nn Record Not Found ";
+}
