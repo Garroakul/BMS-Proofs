@@ -187,7 +187,7 @@ class BigBank {
         return money;
     }
 
-    // Mainenance functions.
+    // Maintenance functions.
 
     bool expandSize(int newSize) {
         if (newSize < accountMax) return false;
@@ -228,4 +228,32 @@ class BigBank {
 int main() {
     BigBank thisBank = new BigBank(100);
 
+    // Display options
+    char input;
+    do {
+        cout << "BIG BANK";
+        cin.get();
+        cout << "nnt1. create account";
+        cout << "nnt2. deposit";
+        cout << "nnt3. withdraw";
+        cout << "nnt4. close account";
+        //...etc
+        cout << "nnt10. exit";
+        cout << "nntSelect a function ";
+        cin >> input;
+
+        system(cls); //clear screen
+        switch (input) {
+            case '1':
+                createAccount("test", 100);
+                break;
+
+                //case '2': ... ; break;
+
+        }
+        cin.ignore();
+        cin.get();
+    }while(input!='10');
+
+    return 0;
 }
