@@ -123,6 +123,7 @@ void bot_smart_move(int i,int j)
 				else bot_sub_move(i,j);
 			}
 			else bot_sub_move(i,j);
+		bot_sub_move(i,j);
 		}
 		else bot_sub_move(i,j);
 	}
@@ -144,6 +145,21 @@ void bot_sub_move(int i,int j)
 	else if(board[2][2]=='X' && board[0][2]=='X' && board[1][2] == ' '){
 		board[1][2]='O';
 		return;}
+
+	//check center (4 total)
+	else if(board[1][1]=='X' && board[0][0]=='X' && board[2][2] == ' '){
+		board[2][2]='O';
+		return;}
+	else if(board[1][1]=='X' && board[2][2]=='X' && board[0][0] == ' '){
+		board[0][0]='O';
+		return;}
+	else if(board[1][1]=='X' && board[2][0]=='X' && board[0][2] == ' '){
+		board[0][2]='O';
+		return;}
+	else if(board[1][1]=='X' && board[0][2]=='X' && board[2][0] == ' '){
+		board[2][0]='O';
+		return;}
+
 	//check center (4 total)
 	else if(board[1][1]=='X' && board[1][0]=='X' && board[1][2] == ' '){
 		board[1][2]='O';
