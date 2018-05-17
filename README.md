@@ -1,5 +1,5 @@
-# BMS-Proofs
+# Tic Tac Tow-Proofs
 
-This is the project for 449-topic #1, Bank Management System
+This is the project for 449-topic #2, Tic Tac Toe
 
-Yilun Li and Tyler Paul
+Yilun Li, Aderolake and Tyler Paul
