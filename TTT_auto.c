@@ -21,9 +21,9 @@ void bot_input();
 char check_rule();
 
 //*****TO PROVE *****
-int check_bot_valid(int,int); //a
-int check_human_valid(int,int); //b
-void check_winner(char); //c
+int check_bot_valid(int,int); //a - Pending
+int check_human_valid(int,int); //b - Pending
+void check_winner(char); //c - Pending
 //the bot ai that never loses
 void bot_smart_move(int i,int j);
 void bot_sub_move(int i,int j);
@@ -64,6 +64,18 @@ void human_input()
 }
 
 //function that reject an invalid move from the user
+
+/*@ requires 0<=x<3 && 0<=y<3;
+    behavior is_valid:
+    	assumes board[x][y]==' ';
+	ensures \return == 0;
+    behavior not_valid:
+    	assumes board[x][y]!=' ';
+	ensures \return == 1;
+    complete behaviors is_valid, not_valid;
+    disjoint behaviors is_valid, not_valid;
+ */
+
 int check_human_valid(int x,int y)
 {
 	if(board[x][y]!= ' '){
@@ -198,6 +210,17 @@ void bot_sub_move(int i,int j)
 	else board[i][j]='O';
 }
 
+/*@ requires 0<=x<3 && 0<=y<3;
+    behavior is_valid:
+    	assumes board[x][y]==' ';
+	ensures \return == 0;
+    behavior not_valid:
+    	assumes board[x][y]!=' ';
+	ensures \return == 1;
+    complete behaviors is_valid, not_valid;
+    disjoint behaviors is_valid, not_valid;
+ */
+
 int check_bot_valid(int i,int j)
 {
 	if(board[i][j]!= ' '){
@@ -222,22 +245,73 @@ void display()
 }
 
 //check the rule for game ending or not
+
+/*@ predicate verticalLine(int i) =
+    (board[0][i] == board[1][i] == board[2][i]);
+    
+    predicate horizontalLine(int i) =
+    (board[i][0] == board[i][1] == board[i][2]);
+    
+    predicate diagonalLine() =
+    (board[0][0] == board[1][1] == board[2][2]) || (board[0][2] == board[1][1] == board[2][0]);
+    
+    behavior 3V1:
+    	assumes verticalLine(0);
+	ensures \return == board[0][0];
+    behavior 3V2:
+    	assumes verticalLine(1);
+	ensures \return == board[0][1];
+    behavior 3V3:
+    	assumes verticalLine(2);
+	ensures \return == board[0][2];
+    behavior 3H1:
+    	assumes horizontalLine(0);
+	ensures \return == board[0][0];
+    behavior 3H2:
+    	assumes horizontalLine(1);
+	ensures \return == board[1][0];
+    behavior 3H3:
+    	assumes horizontalLine(2);
+	ensures \return == board[2][0];
+    behavior 3D:
+    	assumes diagonalLine();
+	ensures \return == board[1][1];
+    behavior none:
+    	assumes !verticalLine(0) && !verticalLine(1) && !verticalLine(2) && !horizontalLine(0) && !horizontalLine(1) && !horizontalLine(2) && !diagonalLine();
+	ensures \return == ' ';
+    complete behaviors 3V1, 3V2, 3V3, 3H1, 3H2, 3H3, 3D, none;
+    disjoint behaviors 3V1, 3V2, 3V3, 3H1, 3H2, 3H3, 3D, none;
+ */
+
 char check_rule()
 {
-	int i;
-	for(i=0; i<3; i++)
+	// Vertical checks.
+	
+	if(board[0][0]==board[0][1] && board[0][0]==board[0][2]) 
+	return board[0][0];
+	
+	if(board[1][0]==board[1][1] && board[1][0]==board[1][2]) 
+	return board[1][0];
 
-		if(board[i][0]==board[i][1] && board[i][0]==board[i][2]) 
-		return board[i][0];
-
-	for(i=0; i<3; i++) 
-
-		if(board[0][i]==board[1][i] && board[0][i]==board[2][i]) 
-		return board[0][i];
-
-	if(board[0][0]==board[1][1] && board[1][1]==board[2][2])
+	if(board[2][0]==board[2][1] && board[2][0]==board[2][2]) 
+	return board[2][0];
+	
+	// Horizontal checks.
+	
+	if(board[0][0]==board[1][0] && board[0][0]==board[2][0]) 
 	return board[0][0];
 
+	if(board[0][1]==board[1][1] && board[0][1]==board[2][1]) 
+	return board[0][1];
+
+	if(board[0][2]==board[1][2] && board[0][2]==board[2][2]) 
+	return board[0][2];
+	
+	// Diagonal checks.
+	
+	if(board[0][0]==board[1][1] && board[1][1]==board[2][2])
+	return board[0][0];
+	
 	if(board[0][2]==board[1][1] && board[1][1]==board[2][0])
 	return board[0][2];
 
@@ -245,6 +319,9 @@ char check_rule()
 }
 
 //check who is the winner
+
+//@ requires flag != ' ';
+
 void check_winner(char flag)
 {
 	display();
