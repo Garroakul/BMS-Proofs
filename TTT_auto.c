@@ -30,11 +30,29 @@ void bot_sub_move(int i,int j);
 //*******************
 int input_generator();
 
+/*@ ensures \forall integer i, j; 0<=i<3 && 0<=j<3 => board[i][j] == ' ';
+    assigns board;
+ */
+
 void game_init()
 {
 	int i, j;
 	//assign all board space with ' '
+	
+	/*@ loop invariant 0<=i<3;
+	    loop invariant \forall integer m, n; 0<=m<i && 0<=n<3 => board[m][n] == ' ';
+	    loop variant 3 - i;
+	    loop assigns i, board;
+	 */
+	
 	for(i=0; i<3; i++)
+		
+		/*@ loop invariant 0<=j<3;
+		    loop invariant \forall integer n; 0<=n<j => board[i][n] == ' ';
+		    loop variant 3 - j;
+		    loop assigns j, board;
+		 */
+		
 		for(j=0; j<3; j++) board[i][j] = ' ';
 }
 
