@@ -1,0 +1,39 @@
+Work with a partner. Choose one project. If you have an idea for a
+different project, speak to the professor first.
+
+If you already know someone you want to work with, and s/he wants to
+work with you, BOTH students should send an email to Fanchao stating
+this. Otherwise we will assign you a partner. If you really want to
+work alone (not recommended), tell us that.
+
+Due: Friday May 18 (any time of day). Submit all materials including a
+README file, into the SVN account of ONE of the partners. The README
+file should contain a description of the problem you worked on, the
+structure of your implementation (how is it broken up into functions
+and what does each do?), what you were able to specify about it, and
+what you were able to prove (or not prove). A Makefile should be
+included to run all of the verification tasks.
+
+
+--------------
+
+Tic tac toe
+
+Design a simple tic-tac-toe game in C in which a user plays the
+computer. The computer accepts keyboard input specifying the square
+the user wants to mark next. It returns the computer's next move and a
+print-out of the current state of the game: a grid marked with Xs and
+Os. At the end, the computer says who wins (or that there is a tie).
+
+Some things to prove:
+  - the computer's move is valid
+  - the computer will reject an invalid move from the user
+  - the final result reported by the computer is correct (e.g., if
+  it says the user won, then the user really did win)
+  - other goals as needed
+  - the ultimate goal: the computer can never lose (i.e., the worst
+  it will do is tie)
+
+
+--------------
+

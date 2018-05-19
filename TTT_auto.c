@@ -11,58 +11,136 @@
   it will do is tie) */
 
 char board[3][3];
-void game_init();
-void display();
 
-void human_input();
+void game_init(); //game board init
+void display(); //graphic support
 
-//d before the bot input, it would check whether the game is tie. If it is, then end
-void bot_input();
-char check_rule();
+char check_rule(); //main function checking who wins, proved
+void check_winner(char); //just a printing functuon
 
-//*****TO PROVE *****
-int check_bot_valid(int,int); //a - Pending
-int check_human_valid(int,int); //b - Pending
-void check_winner(char); //c - Pending
-//the bot ai that never loses
-void bot_smart_move(int i,int j);
-void bot_sub_move(int i,int j);
-//*******************
-int input_generator();
+void human_input(); //takes human input (keyboard input commented, now using auto number generaotr)
+int input_generator(); //generates a move for human, including valid & invalid moves
+int check_human_valid(int,int); //check human input valid, proved
 
-/*@ ensures \forall integer i, j; 0<=i<3 && 0<=j<3 => board[i][j] == ' ';
-    assigns board;
- */
+void bot_input(); //check wether bot should input
+int check_bot_valid(int,int); //check bot input valid, proved the dafault condition
+void bot_smart_move(int,int); //secondary func for bot move
+void bot_sub_move(int,int); //sub func for smart_move
 
+//graphic display for the board
+void display()
+{
+	int i;
+	for(i=0; i<3; i++) {
+		printf(" %c | %c | %c ",board[i][0],
+		board[i][1], board[i][2]);
+
+		if(i!=2) printf("\n---|---|---\n");
+	}
+	printf("\n");
+}
+
+//fill the board with empty space
 void game_init()
 {
 	int i, j;
 	//assign all board space with ' '
-	
-	/*@ loop invariant 0<=i<3;
-	    loop invariant \forall integer m, n; 0<=m<i && 0<=n<3 => board[m][n] == ' ';
-	    loop variant 3 - i;
-	    loop assigns i, board;
-	 */
-	
-	for(i=0; i<3; i++)
-		
-		/*@ loop invariant 0<=j<3;
-		    loop invariant \forall integer n; 0<=n<j => board[i][n] == ' ';
-		    loop variant 3 - j;
-		    loop assigns j, board;
-		 */
-		
-		for(j=0; j<3; j++) board[i][j] = ' ';
+
+	for(i=0; i<3; i++){
+
+		for(j=0; j<3; j++){ board[i][j] = ' '; }
+
+	}
 }
 
-int input_generator()
+//check the rule for game ending or not
+
+/*@ predicate verticalLine(integer i) =
+    (board[0][i] == board[1][i] == board[2][i]);
+    
+    predicate horizontalLine(integer i) =
+    (board[i][0] == board[i][1] == board[i][2]);
+    
+    predicate diagonalLine(integer i) =
+    (board[0][0] == board[i][i] == board[2][2]) || (board[0][2] == board[i][i] == board[2][0]);
+ */
+
+ /*@requires \valid(board + (0..2));
+  requires \valid(board[0] + (0..2));
+  requires \valid(board[1] + (0..2));
+  requires \valid(board[2] + (0..2));
+  requires \forall int i,j; (0 <= i <= 2 && 0 <= j <= 2) ==> (board[i][j] == 'X' || board[i][j] == 'O' || board[i][j] == ' ');
+    behavior VertOne:
+    	assumes verticalLine(0) ;
+		ensures \result == board[0][0];
+    behavior VertTwo:
+    	assumes verticalLine(1) && !(verticalLine(0));
+		ensures \result == board[1][1];
+    behavior VertThree:
+    	assumes verticalLine(2) && !(verticalLine(0) || verticalLine(1));
+		ensures \result == board[2][2];
+    behavior HorOne:
+    	assumes horizontalLine(0) && !(verticalLine(0) || verticalLine(1) || verticalLine(2));
+		ensures \result == board[0][0];
+    behavior HorTwo:
+    	assumes horizontalLine(1)&& !(verticalLine(0) || verticalLine(1) || verticalLine(2) || horizontalLine(0));
+		ensures \result == board[1][1];
+    behavior HorThree:
+    	assumes horizontalLine(2) && !(verticalLine(0) || verticalLine(1) || verticalLine(2) || horizontalLine(0) || horizontalLine(1));
+		ensures \result == board[2][2];
+    behavior Diag:
+    	assumes diagonalLine(1) && !(verticalLine(0) || verticalLine(1) || verticalLine(2) || horizontalLine(0) || horizontalLine(1) || horizontalLine(2));
+		ensures \result == board[1][1];
+    behavior none:
+    	assumes !(verticalLine(0) || verticalLine(1) || verticalLine(2) || horizontalLine(0) || horizontalLine(1) || horizontalLine(2) || diagonalLine(1));
+		ensures \result == ' ';
+    complete behaviors VertOne, VertTwo, VertThree, HorOne, HorTwo, HorThree, Diag, none;
+    disjoint behaviors VertOne, VertTwo, VertThree, HorOne, HorTwo, HorThree, Diag, none;
+ */
+char check_rule()
 {
-	int r=rand()%4+1;
-	return r;
+	// Vertical checks.
+	
+	if(board[0][0]==board[0][1] && board[0][0]==board[0][2]) 
+	return board[0][0];
+	
+	if(board[1][0]==board[1][1] && board[1][0]==board[1][2]) 
+	return board[1][0];
+
+	if(board[2][0]==board[2][1] && board[2][0]==board[2][2]) 
+	return board[2][0];
+	
+	// Horizontal checks.
+	
+	if(board[0][0]==board[1][0] && board[0][0]==board[2][0]) 
+	return board[0][0];
+
+	if(board[0][1]==board[1][1] && board[0][1]==board[2][1]) 
+	return board[0][1];
+
+	if(board[0][2]==board[1][2] && board[0][2]==board[2][2]) 
+	return board[0][2];
+	
+	// Diagonal checks.
+	
+	if(board[0][0]==board[1][1] && board[1][1]==board[2][2])
+	return board[0][0];
+	
+	if(board[0][2]==board[1][1] && board[1][1]==board[2][0])
+	return board[0][2];
+
+	return ' ';
 }
 
-//this function checks and accepts player's input
+//just a print function
+void check_winner(char flag)
+{
+	display();
+	if(flag=='X') printf("You won the game\n");
+	else printf("Bot won the game\n");
+}
+
+//this function accepts generator's input
 void human_input()
 {
 	int x, y;
@@ -76,9 +154,18 @@ void human_input()
 
 	valid=check_human_valid(x,y);
 	if(valid==1){
+        printf("Your move is invalid, try another move.\n");
 		human_input();
 	}
 	else board[x][y] = 'X';
+}
+
+/*@ ensures \result>=1 && \result<=4;
+ */
+int input_generator()
+{
+	int r=rand()%4+1;
+	return r;
 }
 
 //function that reject an invalid move from the user
@@ -86,18 +173,16 @@ void human_input()
 /*@ requires 0<=x<3 && 0<=y<3;
     behavior is_valid:
     	assumes board[x][y]==' ';
-	ensures \return == 0;
+		ensures \result == 0;
     behavior not_valid:
     	assumes board[x][y]!=' ';
-	ensures \return == 1;
+		ensures \result == 1;
     complete behaviors is_valid, not_valid;
     disjoint behaviors is_valid, not_valid;
  */
-
 int check_human_valid(int x,int y)
 {
 	if(board[x][y]!= ' '){
-	printf("Your move is invalid, try another move.\n");
 	return 1;
 	}
 	else return 0;
@@ -106,6 +191,7 @@ int check_human_valid(int x,int y)
 //this function generates the bot's input
 void bot_input()
 {
+	//check wether there is still space on board
 	int i, j;
 	int valid;
 	for(i=0; i<3; i++){
@@ -120,15 +206,18 @@ void bot_input()
 	}
 	else
 	{
-		//check the default bot move board[i][j]
+		//if still space available
+		//check the default bot move board[i][j] (first available spot)
 		valid=check_bot_valid(i,j);
 		if(valid==1){
+            printf("Bot made an invalid move, it's trying again\n");
 			bot_input();
 		}
 	else bot_smart_move(i,j);
 	}
 }
 
+//bot AI part I
 void bot_smart_move(int i,int j)
 {
 	if(board[1][1]!=' '){
@@ -156,6 +245,7 @@ void bot_smart_move(int i,int j)
 	else board[1][1] = 'O';
 }
 
+//bot AI part II
 void bot_sub_move(int i,int j)
 {
 	//check cornor (4 total)
@@ -172,7 +262,7 @@ void bot_sub_move(int i,int j)
 		board[1][2]='O';
 		return;}
 
-	//check center (4 total)
+	//check center-diag (4 total)
 	else if(board[1][1]=='X' && board[0][0]=='X' && board[2][2] == ' '){
 		board[2][2]='O';
 		return;}
@@ -228,13 +318,13 @@ void bot_sub_move(int i,int j)
 	else board[i][j]='O';
 }
 
-/*@ requires 0<=x<3 && 0<=y<3;
+/*@ requires 0<=i<3 && 0<=j<3;
     behavior is_valid:
-    	assumes board[x][y]==' ';
-	ensures \return == 0;
+    	assumes board[i][j]==' ';
+	ensures \result == 0;
     behavior not_valid:
-    	assumes board[x][y]!=' ';
-	ensures \return == 1;
+    	assumes board[i][j]!=' ';
+	ensures \result == 1;
     complete behaviors is_valid, not_valid;
     disjoint behaviors is_valid, not_valid;
  */
@@ -242,110 +332,12 @@ void bot_sub_move(int i,int j)
 int check_bot_valid(int i,int j)
 {
 	if(board[i][j]!= ' '){
-		printf("Bot made an invalid move, it's trying again\n");
 		//This should not happen
 		return 1;
 	}
 	else return 0;
 }
 
-//call to display the board
-void display()
-{
-	int t;
-	for(t=0; t<3; t++) {
-		printf(" %c | %c | %c ",board[t][0],
-		board[t][1], board[t][2]);
-
-		if(t!=2) printf("\n---|---|---\n");
-	}
-	printf("\n");
-}
-
-//check the rule for game ending or not
-
-/*@ predicate verticalLine(int i) =
-    (board[0][i] == board[1][i] == board[2][i]);
-    
-    predicate horizontalLine(int i) =
-    (board[i][0] == board[i][1] == board[i][2]);
-    
-    predicate diagonalLine() =
-    (board[0][0] == board[1][1] == board[2][2]) || (board[0][2] == board[1][1] == board[2][0]);
-    
-    behavior 3V1:
-    	assumes verticalLine(0);
-	ensures \return == board[0][0];
-    behavior 3V2:
-    	assumes verticalLine(1);
-	ensures \return == board[0][1];
-    behavior 3V3:
-    	assumes verticalLine(2);
-	ensures \return == board[0][2];
-    behavior 3H1:
-    	assumes horizontalLine(0);
-	ensures \return == board[0][0];
-    behavior 3H2:
-    	assumes horizontalLine(1);
-	ensures \return == board[1][0];
-    behavior 3H3:
-    	assumes horizontalLine(2);
-	ensures \return == board[2][0];
-    behavior 3D:
-    	assumes diagonalLine();
-	ensures \return == board[1][1];
-    behavior none:
-    	assumes !verticalLine(0) && !verticalLine(1) && !verticalLine(2) && !horizontalLine(0) && !horizontalLine(1) && !horizontalLine(2) && !diagonalLine();
-	ensures \return == ' ';
-    complete behaviors 3V1, 3V2, 3V3, 3H1, 3H2, 3H3, 3D, none;
-    disjoint behaviors 3V1, 3V2, 3V3, 3H1, 3H2, 3H3, 3D, none;
- */
-
-char check_rule()
-{
-	// Vertical checks.
-	
-	if(board[0][0]==board[0][1] && board[0][0]==board[0][2]) 
-	return board[0][0];
-	
-	if(board[1][0]==board[1][1] && board[1][0]==board[1][2]) 
-	return board[1][0];
-
-	if(board[2][0]==board[2][1] && board[2][0]==board[2][2]) 
-	return board[2][0];
-	
-	// Horizontal checks.
-	
-	if(board[0][0]==board[1][0] && board[0][0]==board[2][0]) 
-	return board[0][0];
-
-	if(board[0][1]==board[1][1] && board[0][1]==board[2][1]) 
-	return board[0][1];
-
-	if(board[0][2]==board[1][2] && board[0][2]==board[2][2]) 
-	return board[0][2];
-	
-	// Diagonal checks.
-	
-	if(board[0][0]==board[1][1] && board[1][1]==board[2][2])
-	return board[0][0];
-	
-	if(board[0][2]==board[1][1] && board[1][1]==board[2][0])
-	return board[0][2];
-
-	return ' ';
-}
-
-//check who is the winner
-
-//@ requires flag != ' ';
-
-void check_winner(char flag)
-{
-	display();
-	if(flag=='X') printf("You won the game\n");
-	else printf("Bot won the game\n");
-}
 
 //main function
 int main()
